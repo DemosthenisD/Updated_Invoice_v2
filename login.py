@@ -1,4 +1,5 @@
 import streamlit as st
+import toml
 
 # Load secrets
 user = st.secrets["credentials"]["USER"]

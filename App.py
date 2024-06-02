@@ -6,9 +6,8 @@ from io import BytesIO, StringIO
 import base64
 import os
 from base64 import b64encode
-import win32com.client
-import pythoncom
 from login import login
+
 
 # Initialize invoices in session state
 if 'invoices' not in st.session_state:
@@ -222,12 +221,13 @@ def main():
                     st.markdown(tmp_download_link, unsafe_allow_html=True)
 
                 elif format_option == "PDF":
-                    # Convert the document to PDF
-                    pdf_file = convert_to_pdf('filled_document.docx')
-                    tmp_download_link = download_link_pdf(pdf_file, 'filled_document.pdf', 'Click here to download PDF')
-                    st.markdown(tmp_download_link, unsafe_allow_html=True)
-                    remove_document_file('filled_document.docx')  # Adjust this path as per your actual file name
-                    remove_document_file('filled_document.pdf')  # Adjust this path as per your actual file name
+                    st.warning("This option will be add later")
+                    # # Convert the document to PDF
+                    # pdf_file = convert_to_pdf('filled_document.docx')
+                    # tmp_download_link = download_link_pdf(pdf_file, 'filled_document.pdf', 'Click here to download PDF')
+                    # st.markdown(tmp_download_link, unsafe_allow_html=True)
+                    # remove_document_file('filled_document.docx')  # Adjust this path as per your actual file name
+                    # remove_document_file('filled_document.pdf')  # Adjust this path as per your actual file name
             except:
                     tmp_download_link = download_link_docx(template_doc, 'filled_document.docx', 'Click here to download DOCX')
                     st.markdown(tmp_download_link, unsafe_allow_html=True)
@@ -251,31 +251,35 @@ def download_link_docx(doc, filename, text):
     href = f'<a href="data:application/octet-stream;base64,{base64.b64encode(doc_bytes).decode()}" download="{filename}">{text}</a>'
     return href
 
-def convert_to_pdf(docx_file):
-    # Initialize COM
-    pythoncom.CoInitialize()
-    try:
-        # Get the absolute path of the DOCX file
-        docx_path = os.path.abspath(docx_file)
-        # Generate the PDF file name
-        pdf_path = os.path.splitext(docx_path)[0] + ".pdf"
-        # Create an instance of the Word application
-        word = win32com.client.Dispatch("Word.Application")
-        try:
-            # Open the DOCX file
-            doc = word.Documents.Open(docx_path)
-            # Save the document as PDF
-            doc.SaveAs(pdf_path, FileFormat=17)  # 17 is the PDF file format
-            doc.Close()
-        except Exception as e:
-            raise e
-        finally:
-            # Close the Word application
-            word.Quit()
-    finally:
-        # Uninitialize COM
-        pythoncom.CoUninitialize()
-    return pdf_path
+
+
+# def convert_to_pdf(docx_file):
+#     # Initialize COM
+#     pythoncom.CoInitialize()
+#     try:
+#         # Get the absolute path of the DOCX file
+#         docx_path = os.path.abspath(docx_file)
+#         # Generate the PDF file name
+#         pdf_path = os.path.splitext(docx_path)[0] + ".pdf"
+#         # Create an instance of the Word application
+#         word = win32com.client.Dispatch("Word.Application")
+#         try:
+#             # Open the DOCX file
+#             doc = word.Documents.Open(docx_path)
+#             # Save the document as PDF
+#             doc.SaveAs(pdf_path, FileFormat=17)  # 17 is the PDF file format
+#             doc.Close()
+#         except Exception as e:
+#             raise e
+#         finally:
+#             # Close the Word application
+#             word.Quit()
+#     finally:
+#         # Uninitialize COM
+#         pythoncom.CoUninitialize()
+#     return pdf_path
+
+
 
 # Function to remove the downloaded document file from root directory
 def remove_document_file(file_path):

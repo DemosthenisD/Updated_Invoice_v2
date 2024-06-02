@@ -52,11 +52,10 @@ try:
                 with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
                     for sheet_name, df in dfs.items():
                         df.to_excel(writer, index=False, sheet_name=sheet_name)
+                st.success("Record saved successfully.")   
 
-            st.success("Record saved successfully.")   
 
 
-        elif not ((df['Client'] == selected_client) & (df['Project'] == new_project_existing_client)).any():
             if selected_client and new_project_existing_client:
                 add_new_record = {
                     'Client' : selected_client,
@@ -64,22 +63,33 @@ try:
                 }
                 # Read existing data from the Excel file
                 xl = pd.ExcelFile(file_path)
+
                 # Load all sheets into a dictionary of DataFrames
                 dfs = {sheet_name: xl.parse(sheet_name) for sheet_name in xl.sheet_names}
-                # Update the specific sheet with the new record
-                if worksheet_name in dfs:
-                    df = dfs[worksheet_name]
-                    df = pd.concat([df, pd.DataFrame([add_new_record])], ignore_index=True)
-                    dfs[worksheet_name] = df
-                else:
-                    # Handle case where worksheet_name doesn't exist
-                    dfs[worksheet_name] = pd.DataFrame([add_new_record])
-                # Write all sheets back to the Excel file
-                with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
-                    for sheet_name, df in dfs.items():
-                        df.to_excel(writer, index=False, sheet_name=sheet_name)
 
-            st.success("Record saved successfully.")   
+                # Check if the record already exists in any of the sheets
+                record_exists = False
+                for sheet_name, df in dfs.items():
+                    if 'Client' in df.columns and 'Project' in df.columns:
+                        if ((df['Client'] == selected_client) & (df['Project'] == new_project_existing_client)).any():
+                            record_exists = True
+                            st.warning("Record Already Exist")
+                            break
+                # If the record doesn't exist, add it
+                if not record_exists:
+                    if worksheet_name in dfs:
+                        df = dfs[worksheet_name]
+                        df = pd.concat([df, pd.DataFrame([add_new_record])], ignore_index=True)
+                        dfs[worksheet_name] = df
+                    else:
+                        dfs[worksheet_name] = pd.DataFrame([add_new_record])
+
+                    # Write all sheets back to the Excel file
+                    with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
+                        for sheet_name, df in dfs.items():
+                            df.to_excel(writer, index=False, sheet_name=sheet_name)
+
+                    st.success("Record saved successfully.")   
 
         else:
             st.warning("Record Already Exist")
