@@ -30,11 +30,11 @@ try:
     new_data = pd.read_csv(file_path_csv)
 
 
-    col1, col2, col3 = st.columns([1,1,2])
+    col1, col2, col3 = st.columns([1,1,1])
     with col1:
         display_full_data = st.checkbox("Show DataFrame", value=True)
     with col2:    
-        display_new_record = st.checkbox("New Record")
+        display_new_record = st.checkbox("List of Clients / Projects List")
     with col3:
         pass
 
