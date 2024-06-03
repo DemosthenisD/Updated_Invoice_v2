@@ -172,7 +172,12 @@ def main():
         clients  = df['Client'].unique()
         projects = df['Project'].unique()
 
-        client = st.selectbox("Select Client", clients)
+        col1, col2 = st.columns([1,1])
+        with col1:
+            client = st.selectbox("Select Client", clients)
+        with col2:
+            filtered_address = df[df['Client'] == client]['Address'].unique() 
+            address = st.selectbox("Address", filtered_address)
         # if client:
         invoice_no = len(st.session_state.invoices) + 1
         col1,col2 = st.columns([1,1])
@@ -183,16 +188,15 @@ def main():
 
         vat = st.select_slider('VAT', options=[i for i in range(0, 101)], format_func=lambda x: f'{x}%')
 
-
         filtered_client_code = df[df['Client'] == client]['client_code'].unique()
+
+        
 
         filtered_projects = df[df['Client'] == client]['Project'].unique()          
         project = st.selectbox("Select Project", filtered_projects)
         description = st.text_area("Description")
-        address = "My Address"
         vat_number = "My VAT No"
         year = date.year
-
 
         with st.expander("Select Invoice Template and Format"):
             col1, col2 = st.columns([1,1])
@@ -216,6 +220,7 @@ def main():
             add_new_record = {
                 'Client' : client,
                 'Project': project,
+                'Address': address,
                 'Date Issued': date,
                 'Year': year,
                 'client_code': filtered_client_code,
