@@ -4,9 +4,9 @@ import os
 
 
 
-home_page      = st.sidebar.page_link('pages/0_home.py',           label="HOME",           icon="🏡")
-record_page    = st.sidebar.page_link('pages/1_record.py',         label="RECORD",         icon="📓")    
-add_new_record = st.sidebar.page_link('pages/2_add_new_record.py', label="ADD NEW RECORD", icon="✒️")  
+st.sidebar.page_link('pages/0_generate_invoice.py',        label="Generate Invoice",               icon="🏡")
+st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
+st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record",  icon="✒️")  
 
 
 def load_dataframe(file_path, worksheet_name):
