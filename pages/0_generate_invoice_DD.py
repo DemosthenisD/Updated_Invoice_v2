@@ -160,8 +160,8 @@ def main():
         template_path = 'template1.docx'
         template_doc = Document(template_path)
 
-        file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate.xlsx')  # Full file path
-        worksheet_name = "Clients"
+        file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_04062024.xlsx')  # Full file path - DD_04062024: UPDATED FILE NAME
+        worksheet_name = "Project_List" # DD_04062024: previously "Clients"
         df = load_dataframe(file_path, worksheet_name)
 
         file_path_csv = 'new_record.csv'
@@ -186,7 +186,7 @@ def main():
         with col2:
             amount = st.number_input("Amount")
 
-        vat = st.select_slider('VAT', options=[i for i in range(0, 101)], format_func=lambda x: f'{x}%')
+        vat = st.select_slider('VAT',value=df[df['Client'] == client]['VAT %'].unique(), options=[i for i in range(0, 101)], format_func=lambda x: f'{x}%') # DD_04062024: added--> value=df[df['Client'] == client]['VAT %'].unique()
 
         filtered_client_code = df[df['Client'] == client]['client_code'].unique()
 
@@ -195,13 +195,13 @@ def main():
         filtered_projects = df[df['Client'] == client]['Project'].unique()          
         project = st.selectbox("Select Project", filtered_projects)
         description = st.text_area("Description")
-        vat_number = "My VAT No"
+        vat_number = df[df['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
         year = date.year
 
         with st.expander("Select Invoice Template and Format"):
             col1, col2 = st.columns([1,1])
             with col1:
-                invoice_template = st.radio("Select Template for Invoice", ["Template-1","Template-2"], key="invoice_template")
+                invoice_template = st.radio("Select Template for Invoice", ["Template-1","Template-2"], key="invoice_template", index= (df[df['Client'] == client]['Invoice Template'].unique())[-1]) # DD_04062024: Added  index= (df[df['Client'] == client]['Invoice Template'].unique())[-1] to get last character
             with col2:
                 # Select download format
                 format_option = st.radio("Select download format", ["DOCX", "PDF"], key="format_option")
@@ -224,6 +224,10 @@ def main():
                 'Date Issued': date,
                 'Year': year,
                 'client_code': filtered_client_code,
+                'Type':"Invoice", # DD_04062024 added this
+                'Invoice No':, # DD_04062024 added this
+                'Invoiced Amt Net':, # DD_04062024 added this
+                'VAT_Amount':amount, # DD_04062024 added this
             }
 
             try:
