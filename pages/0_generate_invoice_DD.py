@@ -8,7 +8,7 @@ import os
 from base64 import b64encode
 from streamlit_extras.switch_page_button import switch_page
 
-st.sidebar.page_link('pages/0_generate_invoice.py',        label="Generate Invoice",               icon="🏡")
+st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice",               icon="🏡")
 st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
 st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record",  icon="✒️")  
 
@@ -108,10 +108,10 @@ def download_link_pdf(file_path, text, label):
     return href
 
 # Assuming your template_doc is a docx.Document object
-def download_link_docx(doc, invoice_no, client, filename, text):
+def download_link_docx(doc, year, invoice_no, client, filename, text):
     """Generates a download link for a Docx file."""
     root_dir = os.getcwd()  # Get the current working directory (root directory)
-    save_file_name = f"{invoice_no}-{client}"
+    save_file_name = f"{year}-{invoice_no} {client} Invoice"
     doc.save(os.path.join(root_dir , filename))  # Save the docx file to the root directory
     with open(os.path.join(root_dir, filename), 'rb') as f:
         doc_bytes = f.read()
@@ -157,27 +157,29 @@ def remove_document_file(file_path):
 
 def main():
     if 'username' in st.session_state:
-        template_path = 'template1.docx'
-        template_doc = Document(template_path)
 
         file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_04062024.xlsx')  # Full file path - DD_04062024: UPDATED FILE NAME
-        worksheet_name = "Project_List" # DD_04062024: previously "Clients"
-        df = load_dataframe(file_path, worksheet_name)
+        
+        worksheet_project_list = "Project_List"  # DD_04062024: previously "Clients"
+        df_project_list = load_dataframe(file_path, worksheet_project_list)
 
-        file_path_csv = 'new_record.csv'
+        worksheet_client_list = "Client_List" 
+        df_client_list = load_dataframe(file_path, worksheet_client_list)
 
-        # Placeholder for storing records
-        records = []
     
-        clients  = df['Client'].unique()
-        projects = df['Project'].unique()
+        clients  = df_project_list['Client'].unique()
 
-        col1, col2 = st.columns([1,1])
+
+        col1, col2, col3 = st.columns([1,1,1])
         with col1:
             client = st.selectbox("Select Client", clients)
         with col2:
-            filtered_address = df[df['Client'] == client]['Address'].unique() 
+            filtered_address = df_client_list[df_client_list['Client'] == client]['Address'].unique() 
             address = st.selectbox("Address", filtered_address)
+        with col3:
+            vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
+            vat_no     = st.selectbox("VAT No", vat_number)
+
         # if client:
         invoice_no = len(st.session_state.invoices) + 1
         col1,col2 = st.columns([1,1])
@@ -186,25 +188,34 @@ def main():
         with col2:
             amount = st.number_input("Amount")
 
-        vat = st.select_slider('VAT',value=df[df['Client'] == client]['VAT %'].unique(), options=[i for i in range(0, 101)], format_func=lambda x: f'{x}%') # DD_04062024: added--> value=df[df['Client'] == client]['VAT %'].unique()
 
-        filtered_client_code = df[df['Client'] == client]['client_code'].unique()
+        filtered_vat = df_project_list[df_project_list['Client'] == client]['VAT %'].unique()
+        vat          = st.selectbox("VAT %", filtered_vat)
+
+        filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
 
         
 
-        filtered_projects = df[df['Client'] == client]['Project'].unique()          
+        filtered_projects = df_project_list[df_project_list['Client'] == client]['Project'].unique()          
         project = st.selectbox("Select Project", filtered_projects)
-        description = st.text_area("Description")
-        vat_number = df[df['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
+
+        filtered_description = df_project_list[df_project_list['Client'] == client]['description'].unique() 
+        description = st.selectbox("Description",filtered_description)
+
+
+
         year = date.year
 
         with st.expander("Select Invoice Template and Format"):
             col1, col2 = st.columns([1,1])
             with col1:
-                invoice_template = st.radio("Select Template for Invoice", ["Template-1","Template-2"], key="invoice_template", index= (df[df['Client'] == client]['Invoice Template'].unique())[-1]) # DD_04062024: Added  index= (df[df['Client'] == client]['Invoice Template'].unique())[-1] to get last character
+                options_for_templates = (df_project_list[df_project_list['Client'] == client]['Invoice Template'].unique())
+                invoice_template = st.radio("Select Template for Invoice", options_for_templates, key="invoice_template")
             with col2:
                 # Select download format
                 format_option = st.radio("Select download format", ["DOCX", "PDF"], key="format_option")
+
+
 
         # BUTTONS
         col1, col2,col3 = st.columns([1,1,2])
@@ -221,13 +232,16 @@ def main():
                 'Client' : client,
                 'Project': project,
                 'Address': address,
+                'description': description,
                 'Date Issued': date,
                 'Year': year,
                 'client_code': filtered_client_code,
-                'Type':"Invoice", # DD_04062024 added this
-                'Invoice No':, # DD_04062024 added this
-                'Invoiced Amt Net':, # DD_04062024 added this
-                'VAT_Amount':amount, # DD_04062024 added this
+                # 'Type': None,
+                'Invoice': None,          # DD_04062024 added this
+                'Invoice No': None,       # DD_04062024 added this
+                'Invoiced Amt Net': None, # DD_04062024 added this
+                'VAT_Amount': None,       # DD_04062024 added this
+                'VAT_No': vat_no,       
             }
 
             try:
@@ -293,18 +307,20 @@ def main():
                     'amount': amount,
                     'vat_value': vat_value,
                     'total_invoice': total_invoice,
-                    'invoice_template': None,  # Initialize Invoice Template
+                    'invoice_template': invoice_template,  # Initialize Invoice Template
                     'download_format' : None  # Initialize download format
                 })
-
                 if invoice_template == "Template-1":
+                    template_path = 'template1.docx'
+                    template_doc = Document(template_path)
+
                     # Fill placeholders
                     fill_placeholders(template_doc, data)
                     # Simulate invoice generation
                     with st.spinner('Generating invoice...'):
                         time.sleep(4)  # Simulate time taken to generate the invoice
                         
-                    download_section(template_doc, invoice_no, client, format_option)
+                    download_section(template_doc, year, invoice_no, client, format_option)
                     
 
                 elif invoice_template == "Template-2":
@@ -325,7 +341,7 @@ def main():
             switch_page('app')
 
 
-def download_section(template_doc, invoice_no, client, format_option):
+def download_section(template_doc, year, invoice_no, client, format_option):
             # Display download section only if invoices are generated
             if st.session_state.invoices:
                 try:
@@ -334,7 +350,7 @@ def download_section(template_doc, invoice_no, client, format_option):
                     invoice['download_format'] = format_option  # Update download format in session
                     if format_option == "DOCX":               
                         # Save the docx file in the root directory
-                        tmp_download_link = download_link_docx(template_doc, invoice_no, client, "filled_document.docx", 'Click here to download DOCX')
+                        tmp_download_link = download_link_docx(template_doc, year, invoice_no, client, "filled_document.docx", 'Click here to download DOCX')
                         st.markdown(tmp_download_link, unsafe_allow_html=True)
                         st.success('Invoice generated successfully!')
                     elif format_option == "PDF":

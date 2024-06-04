@@ -4,7 +4,7 @@ import os
 
 
 
-st.sidebar.page_link('pages/0_generate_invoice.py',        label="Generate Invoice",               icon="🏡")
+st.sidebar.page_link('pages/0_generate_invoice_DD.py',        label="Generate Invoice",               icon="🏡")
 st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
 st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record",  icon="✒️")  
 
@@ -18,31 +18,40 @@ def load_dataframe(file_path, worksheet_name):
         exit()
 
 try:
-    file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate.xlsx')  # Full file path
+    file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_04062024.xlsx')  # Full file path
+
     worksheet_name_1 = "InvoiceLogTemplate"
     df_1 = load_dataframe(file_path, worksheet_name_1)
 
 
-    worksheet_name_2 = "Clients"
-    df_2 = load_dataframe(file_path, worksheet_name_2)
 
-    file_path_csv = 'new_record.csv'
-    new_data = pd.read_csv(file_path_csv)
+    worksheet_client_list = "Client_List"
+    df_client_list = load_dataframe(file_path, worksheet_client_list)
+
+
+    worksheet_project_list = "Project_List"
+    df_project_list = load_dataframe(file_path, worksheet_project_list)
+
 
 
     col1, col2, col3 = st.columns([1,1,1])
     with col1:
         display_full_data = st.checkbox("Show DataFrame", value=True)
     with col2:    
-        display_new_record = st.checkbox("List of Clients / Projects List")
+        display_client_list = st.checkbox("Clients List")
     with col3:
-        pass
+        display_project_list = st.checkbox("Projects List")
 
     if display_full_data:
         st.dataframe(df_1)
 
-    if display_new_record:
-        st.dataframe(df_2)
+    if display_client_list:
+        st.dataframe(df_client_list)
+
+    if display_project_list:
+        st.dataframe(df_project_list)
+
+
 
 except:
     pass
