@@ -7,11 +7,12 @@ import base64
 import os
 from base64 import b64encode
 from streamlit_extras.switch_page_button import switch_page
+import convertapi
 
 st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice",               icon="🏡")
 st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
 st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record",  icon="✒️")  
-# st.sidebar.page_link('pages/3_doc_to_pdf.py',              label="Convert To PDF",                 icon="🖨️")
+
 
 # Define SessionState class
 class SessionState:
@@ -27,9 +28,13 @@ class SessionState:
         else:
             self._state[key] = value
 
+
+
 # Create a SessionState object to store session variables
 session_state = SessionState(invoices=[])
 
+# Set your ConvertAPI secret key
+convertapi.api_secret = 'WNkNerQr6LJX6JUw'  # Replace with your actual API key
 
 # Initialize invoices in session state
 if 'invoices' not in st.session_state:
@@ -119,6 +124,25 @@ def download_link_docx(doc, year, invoice_no, client, filename, text):
     return href
 
 
+
+def convert_docx_to_pdf(file_path):
+    # Use ConvertAPI to convert the DOCX file to PDF
+    result = convertapi.convert('pdf', {
+        'File': file_path
+    }, from_format='docx')
+
+    # Save the resulting PDF to a temporary file
+    pdf_file_path = 'converted.pdf'
+    result.save_files(pdf_file_path)
+    
+    # Read the PDF file and return its content
+    with open(pdf_file_path, 'rb') as f:
+        pdf_file = f.read()
+
+    # Clean up temporary files
+    os.remove(pdf_file_path)
+
+    return pdf_file
 
 # def convert_to_pdf(docx_file):
 #     # Initialize COM
@@ -213,7 +237,7 @@ def main():
                 invoice_template = st.radio("Select Template for Invoice", options_for_templates, key="invoice_template")
             with col2:
                 # Select download format
-                format_option = st.radio("Select download format", ["DOCX"], key="format_option")
+                format_option = st.radio("Select download format", ["DOCX", "PDF"], key="format_option")
 
 
 
@@ -345,7 +369,8 @@ def main():
                 session_state.invoice_generated = True  # Mark invoice as generated
 
             except Exception as e:
-                st.warning("Select Invoice Template")
+                pass
+                # st.warning("Select Invoice Template")
 
     else:
         st.error("There's some issue, Its requires to login again your app!")
@@ -358,19 +383,44 @@ def download_section(template_doc, year, invoice_no, client, format_option):
             if st.session_state.invoices:
                 try:
                     invoice = st.session_state.invoices[-1]  # Get the last generated invoice
-                    st.markdown("### Download it:")
+                    
                     invoice['download_format'] = format_option  # Update download format in session
-                    if format_option == "DOCX":               
+                    if format_option == "DOCX":
+                        st.markdown("### Download it:")       
                         # Save the docx file in the root directory
                         tmp_download_link = download_link_docx(template_doc, year, invoice_no, client, "filled_document.docx", 'Click here to download DOCX')
                         st.markdown(tmp_download_link, unsafe_allow_html=True)
                         st.success('Invoice generated successfully!')
-                    # elif format_option == "PDF":
-                    #     st.warning("This option will be add later")
-                        # # Convert the document to PDF
-                        # pdf_file = convert_to_pdf('filled_document.docx')
-                        # tmp_download_link = download_link_pdf(pdf_file, 'filled_document.pdf', 'Click here to download PDF')
-                        # st.markdown(tmp_download_link, unsafe_allow_html=True)
+                        download_link_docx(template_doc, year, invoice_no, client, "filled_document.docx")
+
+                    elif format_option == "PDF":
+                        filename = "filled_document.docx"
+                        root_dir = os.getcwd()  # Get the current working directory (root directory)
+                        save_file_name = f"{year}-{invoice_no} {client} Invoice"
+                        template_doc.save(os.path.join(root_dir , filename))  # Save the docx file to the root directory
+  
+                        docx_file_path = 'filled_document.docx'
+
+                        if os.path.exists(docx_file_path):
+                            try:
+                                pdf_file = convert_docx_to_pdf(docx_file_path)
+
+                                if pdf_file:
+                                    st.markdown("### Download it:")
+                                    st.success("Invoice generated successfully!")
+                                    
+                                    # Create a download link
+                                    b64 = base64.b64encode(pdf_file).decode()
+                                    label = 'Click here to download PDF'
+                                    href = f'<a href="data:application/pdf;base64,{b64}" download="{save_file_name}.pdf">{label}</a>'                              
+                                    st.markdown(href, unsafe_allow_html=True)
+                                else:
+                                    st.error("Failed to convert the DOCX file to PDF.")
+                            except Exception as e:
+                                st.error(f"An error occurred during conversion: {e}")
+                        else:
+                            st.error(f"File '{docx_file_path}' not found in the root directory.")   
+
                         # remove_document_file('filled_document.docx')  # Adjust this path as per your actual file name
                         # remove_document_file('filled_document.pdf')  # Adjust this path as per your actual file name
                 except:
