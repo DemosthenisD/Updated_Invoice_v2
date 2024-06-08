@@ -11,7 +11,7 @@ from streamlit_extras.switch_page_button import switch_page
 st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice",               icon="🏡")
 st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
 st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record",  icon="✒️")  
-
+# st.sidebar.page_link('pages/3_doc_to_pdf.py',              label="Convert To PDF",                 icon="🖨️")
 
 # Define SessionState class
 class SessionState:
@@ -324,8 +324,20 @@ def main():
                     
 
                 elif invoice_template == "Template-2":
-                    st.error("Template 2 does not exists")
+                    # st.error("Template 2 does not exists")
+                    template_path = 'template1.docx'
+                    template_doc = Document(template_path)
 
+                    # Fill placeholders
+                    fill_placeholders(template_doc, data)
+                    # Simulate invoice generation
+                    with st.spinner('Generating invoice...'):
+                        time.sleep(4)  # Simulate time taken to generate the invoice
+                        
+                    download_section(template_doc, year, invoice_no, client, format_option)
+
+
+                    
                 # Store the template and other information in session
                 session_state.template_doc = template_doc
                 session_state.invoice_no = invoice_no
@@ -353,8 +365,8 @@ def download_section(template_doc, year, invoice_no, client, format_option):
                         tmp_download_link = download_link_docx(template_doc, year, invoice_no, client, "filled_document.docx", 'Click here to download DOCX')
                         st.markdown(tmp_download_link, unsafe_allow_html=True)
                         st.success('Invoice generated successfully!')
-                    elif format_option == "PDF":
-                        st.warning("This option will be add later")
+                    # elif format_option == "PDF":
+                    #     st.warning("This option will be add later")
                         # # Convert the document to PDF
                         # pdf_file = convert_to_pdf('filled_document.docx')
                         # tmp_download_link = download_link_pdf(pdf_file, 'filled_document.pdf', 'Click here to download PDF')
