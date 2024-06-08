@@ -213,7 +213,7 @@ def main():
                 invoice_template = st.radio("Select Template for Invoice", options_for_templates, key="invoice_template")
             with col2:
                 # Select download format
-                format_option = st.radio("Select download format", ["DOCX", "PDF"], key="format_option")
+                format_option = st.radio("Select download format", ["DOCX"], key="format_option")
 
 
 
@@ -337,7 +337,7 @@ def main():
                     download_section(template_doc, year, invoice_no, client, format_option)
 
 
-                    
+
                 # Store the template and other information in session
                 session_state.template_doc = template_doc
                 session_state.invoice_no = invoice_no
