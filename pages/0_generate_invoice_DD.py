@@ -201,7 +201,7 @@ def main():
             filtered_address = df_client_list[df_client_list['Client'] == client]['Address'].unique() 
             address = st.selectbox("Address", filtered_address)
         with col3:
-            vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
+            vat_number = 100*df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
             vat_no     = st.selectbox("VAT No", vat_number)
 
         # if client:
@@ -214,7 +214,7 @@ def main():
 
 
         filtered_vat = df_project_list[df_project_list['Client'] == client]['VAT %'].unique()
-        vat          = st.selectbox("VAT %", filtered_vat)
+        vat          = st.selectbox("VAT Level", filtered_vat)*100
 
         filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
 
@@ -316,6 +316,10 @@ def main():
                     '{{placeholder8}}': amount,
                     '{{placeholder9}}': vat_value,
                     '{{placeholder10}}':total_invoice
+                    '{{placeholder8_Exp}}:0.00,
+                    '{{placeholder9_Exp}}:0.00,
+                    '{{placeholder8_Tot}}: amount,
+                    '{{placeholder9_Tot}}: vat_value,
                     # Add more placeholders as needed
                 }
 
