@@ -8,6 +8,8 @@ import os
 from base64 import b64encode
 from streamlit_extras.switch_page_button import switch_page
 import convertapi
+from streamlit_free_text_select import st_free_text_select
+
 
 st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice",               icon="🏡")
 st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
@@ -196,12 +198,17 @@ def main():
 
         col1, col2, col3 = st.columns([1,1,1])
         with col1:
-            client = st.selectbox("Select Client", clients)
+            client = st.selectbox("Select Client",clients)
         with col2:
             filtered_address = df_client_list[df_client_list['Client'] == client]['Address'].unique() 
-            address = st.selectbox("Address", filtered_address)
+            address = st_free_text_select(label="Address", 
+                                          options=filtered_address,
+                                            format_func=lambda x: x.lower(),
+                                            placeholder="Select or Enter a VAT",
+                                            disabled=False,
+                                            delay=300,)
         with col3:
-            vat_number = 100*df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
+            vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
             vat_no     = st.selectbox("VAT No", vat_number)
 
         # if client:
@@ -214,17 +221,27 @@ def main():
 
 
         filtered_vat = df_project_list[df_project_list['Client'] == client]['VAT %'].unique()
-        vat          = st.selectbox("VAT Level", filtered_vat)*100
+        vat          = st.selectbox("VAT %", filtered_vat,)                                           
 
         filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
 
         
 
         filtered_projects = df_project_list[df_project_list['Client'] == client]['Project'].unique()          
-        project = st.selectbox("Select Project", filtered_projects)
+        project = st_free_text_select(label="Select Project", 
+                                      options=filtered_projects,
+                                      format_func=lambda x: x.lower(),
+                                      placeholder="Select or Enter a project",
+                                      disabled=False,
+                                      delay=300,)
 
         filtered_description = df_project_list[df_project_list['Client'] == client]['description'].unique() 
-        description = st.selectbox("Description",filtered_description)
+        description = st_free_text_select(label="Description",
+                                          options=filtered_description,
+                                            format_func=lambda x: x.lower(),
+                                            placeholder="Select or Enter a description",
+                                            disabled=False,
+                                            delay=300,)
 
 
 
@@ -316,10 +333,6 @@ def main():
                     '{{placeholder8}}': amount,
                     '{{placeholder9}}': vat_value,
                     '{{placeholder10}}':total_invoice
-                    '{{placeholder8_Exp}}:0.00,
-                    '{{placeholder9_Exp}}:0.00,
-                    '{{placeholder8_Tot}}: amount,
-                    '{{placeholder9_Tot}}: vat_value,
                     # Add more placeholders as needed
                 }
 
