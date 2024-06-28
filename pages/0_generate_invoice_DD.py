@@ -297,8 +297,8 @@ def main():
                 'client_code': filtered_client_code,
                 'Type': "Invoice",
                 'Invoice': None, # DD_04062024 added this
-                'Expenses_Net_Amt': 0 #Expenses_Net_Amount # DD_28062024 added this
-                'Expenses_VAT_Amt': 0 #Expenses_VAT_Amount # DD_28062024 added this 
+                'Expenses_Net_Amt': Expenses_Net_Amount, # DD_28062024 added this
+                'Expenses_VAT_Amt': Expenses_VAT_Amount, # DD_28062024 added this 
                 'Invoice No': invoice_no,       # DD_04062024 added this
                 'Invoiced Amt Net': amount, # DD_04062024 added this
                 'VAT_Amount': VAT_Amount,       # DD_28062024 edited this
@@ -358,8 +358,8 @@ def main():
                     '{{placeholder8_Tot}}': amount+Expenses_Net_Amount,
                     '{{placeholder9}}': vat_value,
                     '{{placeholder9_Exp}}': Expenses_VAT_Amount,
-                    '{{placeholder9_Tot}}': vat_value + Expenses_VAT_Amount
-                    '{{placeholder10}}':total_invoice
+                    '{{placeholder9_Tot}}': vat_value + Expenses_VAT_Amount,
+                    '{{placeholder10}}':total_invoice,
                     # Add more placeholders as needed
                 }
 
