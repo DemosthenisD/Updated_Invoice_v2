@@ -233,7 +233,7 @@ def main():
         filtered_vat = df_project_list[df_project_list['Client'] == client]['VAT %'].unique()
         # DD_28062024: previously--> vat = st.selectbox("VAT %", filtered_vat,)                                           
         vat   = float(st_free_text_select(label="VAT %", 
-                                    options=str(filtered_vat)+["---"],
+                                    options=str(filtered_vat),
                                     #format_func=lambda x: x.lower(),
                                     placeholder="Select or Type VAT %-age",
                                     disabled=False,
