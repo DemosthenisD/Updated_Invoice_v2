@@ -184,48 +184,63 @@ def remove_document_file(file_path):
 def main():
     if 'username' in st.session_state:
 
-        file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_04062024.xlsx')  # Full file path - DD_04062024: UPDATED FILE NAME
+        file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_28062024.xlsx')  # Full file path - DD_04062024: UPDATED FILE NAME
         
         worksheet_project_list = "Project_List"  # DD_04062024: previously "Clients"
         df_project_list = load_dataframe(file_path, worksheet_project_list)
 
         worksheet_client_list = "Client_List" 
         df_client_list = load_dataframe(file_path, worksheet_client_list)
-
-    
+        
         clients  = df_project_list['Client'].unique()
 
+        df_Invoice_List = load_dataframe(file_path,"InvoiceLogTemplate")
 
         col1, col2, col3 = st.columns([1,1,1])
         with col1:
             client = st.selectbox("Select Client",clients)
+             # DD_28062024: Added next row
+            Client_Name_For_Invoice = df_project_list[df_project_list['Client'] == client]['Client Name (for Invoices)'].unique()
         with col2:
             filtered_address = df_client_list[df_client_list['Client'] == client]['Address'].unique() 
             address = st_free_text_select(label="Address", 
                                           options=filtered_address,
                                             format_func=lambda x: x.lower(),
-                                            placeholder="Select or Enter a VAT",
+                                            placeholder="Select or Type Address",
                                             disabled=False,
                                             delay=300,)
         with col3:
             vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
-            vat_no     = st.selectbox("VAT No", vat_number)
-
+            # # DD_28062024: previously--> vat_no     = st.selectbox("VAT No", vat_number)
+            vat_no     = st_free_text_select(label="VAT No", 
+                                          options=vat_number,
+                                            format_func=lambda x: x.lower(),
+                                            placeholder="Select or Type VAT Number",
+                                            disabled=False,
+                                            delay=300,)
         # if client:
-        invoice_no = len(st.session_state.invoices) + 1
-        col1,col2 = st.columns([1,1])
-        with col1:
+       
+        col1,col2 = st.columns([1,1,1]) # DD_28062024: previously--> st.columns([1,1])
+        with col2:            # DD_28062024: previously--> with col1
             date = st.date_input("Date")
-        with col2:
+            year = date.year
+        with col3:            # DD_28062024: previously--> with col2
             amount = st.number_input("Amount")
-
-
+        with col1:            # DD_28062024: New addition
+            Pre_invoice_no = len(df_Invoice_List[df_Invoice_List['Year'] == year]) +1
+            invoice_no= year &"/"& st.text_input(label="invoice No", value=Pre_invoice_no) # DD_28062024: previously--> _invoice_no = len(st.session_state.invoices) + 1
+            
         filtered_vat = df_project_list[df_project_list['Client'] == client]['VAT %'].unique()
-        vat          = st.selectbox("VAT %", filtered_vat,)                                           
-
-        filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
+        # DD_28062024: previously--> vat = st.selectbox("VAT %", filtered_vat,)                                           
+        vat   = st_free_text_select(label="VAT %", 
+                                    options=filtered_vat,
+                                    format_func=lambda x: x.lower(),
+                                    placeholder="Select or Type VAT %-age",
+                                    disabled=False,
+                                    delay=300,)
 
         
+        filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
 
         filtered_projects = df_project_list[df_project_list['Client'] == client]['Project'].unique()          
         project = st_free_text_select(label="Select Project", 
@@ -243,21 +258,26 @@ def main():
                                             disabled=False,
                                             delay=300,)
 
-
-
-        year = date.year
+        
 
         with st.expander("Select Invoice Template and Format"):
             col1, col2 = st.columns([1,1])
             with col1:
-                options_for_templates = (df_project_list[df_project_list['Client'] == client]['Invoice Template'].unique())
-                invoice_template = st.radio("Select Template for Invoice", options_for_templates, key="invoice_template")
+                Filtered_Invoice_Template = (df_project_list[df_project_list['Client'] == client]['Invoice Template'].unique()) # DD_28062024: previously-->  options_for_templates = (df_project_list[df_project_list['Client'] == client]['Invoice Template'].unique())
+                # DD_28062024: ADDED NEXT 2 ROWS
+                options_for_templates =df_project_list['Invoice Template'].unique()
+                index_Selected = options_for_templates.index(Filtered_Invoice_Template)
+                # DD_28062024: added index in st.radio below
+                invoice_template = st.radio("Select Template for Invoice", options_for_templates, index(index_Selected), key="invoice_template")
             with col2:
                 # Select download format
-                format_option = st.radio("Select download format", ["DOCX", "PDF"], key="format_option")
+                format_option = st.radio("Select download format", ["DOCX", "PDF"],  key="format_option")
 
 
-
+        VAT_Amount= (amount*vat)/100
+        Expenses_Net_Amount=0
+        Expenses_VAT_Amount=0 #(Expenses_Net_Amount*vat)/100
+        
         # BUTTONS
         col1, col2,col3 = st.columns([1,1,2])
         with col1:
@@ -266,23 +286,26 @@ def main():
             save_record_button      = st.button("Save Record", key="save_record")
         with col3:
             pass    
-
+    
         # Save Record Button
         if save_record_button:
             add_new_record = {
+                'Year': year,
                 'Client' : client,
+                'Legal Entity': Client_Name_For_Invoice,
                 'Project': project,
+                'client_code': filtered_client_code,
+                'Type': "Invoice",
+                'Invoice': None, # DD_04062024 added this
+                'Expenses_Net_Amt': Expenses_Net_Amount # DD_28062024 added this
+                'Expenses_VAT_Amt':Expenses_VAT_Amount  # DD_28062024 added this 
+                'Invoice No': invoice_no,       # DD_04062024 added this
+                'Invoiced Amt Net': amount, # DD_04062024 added this
+                'VAT_Amount': VAT_Amount,       # DD_28062024 edited this
+                'Date Issued': date,
                 'Address': address,
                 'description': description,
-                'Date Issued': date,
-                'Year': year,
-                'client_code': filtered_client_code,
-                # 'Type': None,
-                'Invoice': None,          # DD_04062024 added this
-                'Invoice No': None,       # DD_04062024 added this
-                'Invoiced Amt Net': None, # DD_04062024 added this
-                'VAT_Amount': None,       # DD_04062024 added this
-                'VAT_No': vat_no,       
+                'VAT_No': vat_no,         
             }
 
             try:
@@ -320,39 +343,60 @@ def main():
         if generate_invoice:
             try:
                 # Define data to fill in placeholders
-                vat_value = (amount * vat)/100
-                total_invoice = amount + vat_value
+                vat_value = VAT_Amount
+                total_invoice = amount + vat_value + Expenses_Net_Amount + Expenses_VAT_Amount
                 data = {
-                    '{{placeholder1}}': client,
+                    '{{placeholder1}}': Client_Name_For_Invoice,
                     '{{placeholder2}}': address,
-                    '{{placeholder3}}': vat_number,
+                    '{{placeholder3}}': vat_no,
                     '{{placeholder4}}': date,
                     '{{placeholder5}}': invoice_no,
-                    '{{placeholder6}}': year,
+                    #'{{placeholder6}}': year,  # DD_28062024 REMOVED THIS since invoice_no now inlcudes year
                     '{{placeholder7}}': description,
                     '{{placeholder8}}': amount,
+                    '{{placeholder8_Exp}}': Expenses_Net_Amount,
+                    '{{placeholder8_Tot}}': amount+Expenses_Net_Amount,
                     '{{placeholder9}}': vat_value,
+                    '{{placeholder9_Exp}}': Expenses_VAT_Amount,
+                    '{{placeholder9_Tot}}': vat_value + Expenses_VAT_Amount
                     '{{placeholder10}}':total_invoice
                     # Add more placeholders as needed
                 }
 
                 # Save invoice to session
                 st.session_state.invoices.append({
-                    'client': client,
-                    'address': address,
-                    'vat_number': vat_number,
-                    'date': date,
-                    'invoice_no': invoice_no,
-                    'year': year,
+                    # DD_28062024 Added following 16 rows and commented previous versions
+                    'Year': year,
+                    'Client' : client,
+                    'Legal Entity': Client_Name_For_Invoice,
+                    'Project': project,
+                    'client_code': filtered_client_code,
+                    'Type': "Invoice",
+                    'Invoice': None, # DD_04062024 added this
+                    'Expenses_Net_Amt': Expenses_Net_Amount # DD_28062024 added this
+                    'Expenses_VAT_Amt':Expenses_VAT_Amount  # DD_28062024 added this 
+                    'Invoice No': invoice_no,       # DD_04062024 added this
+                    'Invoiced Amt Net': amount, # DD_04062024 added this
+                    'VAT_Amount': VAT_Amount,       # DD_28062024 edited this
+                    'Date Issued': date,
+                    'Address': address,
                     'description': description,
-                    'amount': amount,
-                    'vat_value': vat_value,
-                    'total_invoice': total_invoice,
+                    'VAT_No': vat_no,
+                    #'client': client,
+                    #'address': address,
+                    #'vat_number': vat_number,
+                    #'date': date,
+                    #'invoice_no': invoice_no,
+                    #'year': year,
+                    #'description': description,
+                    #'amount': amount,
+                    #'vat_value': vat_value,
+                    #'total_invoice': total_invoice,
                     'invoice_template': invoice_template,  # Initialize Invoice Template
                     'download_format' : None  # Initialize download format
                 })
                 if invoice_template == "Template-1":
-                    template_path = 'template1.docx'
+                    template_path = 'template1_v3.docx' # DD_28062024 Edited this
                     template_doc = Document(template_path)
 
                     # Fill placeholders
@@ -366,7 +410,7 @@ def main():
 
                 elif invoice_template == "Template-2":
                     # st.error("Template 2 does not exists")
-                    template_path = 'template1.docx'
+                    template_path = 'template2_v3.docx' # DD_28062024 Edited this
                     template_doc = Document(template_path)
 
                     # Fill placeholders
