@@ -274,9 +274,9 @@ def main():
                 format_option = st.radio("Select download format", ["DOCX", "PDF"],  key="format_option")
 
 
-        VAT_Amount= (amount*vat)/100
-        Expenses_Net_Amount=0
-        Expenses_VAT_Amount=0 #(Expenses_Net_Amount*vat)/100
+        VAT_Amount = (amount*vat)/100
+        Expenses_Net_Amount = 0
+        Expenses_VAT_Amount = 0 #(Expenses_Net_Amount*vat)/100
         
         # BUTTONS
         col1, col2,col3 = st.columns([1,1,2])
@@ -298,7 +298,7 @@ def main():
                 'Type': "Invoice",
                 'Invoice': None, # DD_04062024 added this
                 'Expenses_Net_Amt': Expenses_Net_Amount # DD_28062024 added this
-                'Expenses_VAT_Amt': Expenses_VAT_Amount  # DD_28062024 added this 
+                'Expenses_VAT_Amt': Expenses_VAT_Amount # DD_28062024 added this 
                 'Invoice No': invoice_no,       # DD_04062024 added this
                 'Invoiced Amt Net': amount, # DD_04062024 added this
                 'VAT_Amount': VAT_Amount,       # DD_28062024 edited this
