@@ -7,7 +7,7 @@ st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Client
 st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record",  icon="✒️")  
 
 
-file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate.xlsx')  # Full file path
+file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_28062024.xlsx')  # Full file path
 worksheet_name = "Clients"
 
 def load_dataframe(file_path, worksheet_name):
