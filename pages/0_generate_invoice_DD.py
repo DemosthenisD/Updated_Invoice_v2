@@ -220,7 +220,7 @@ def main():
                                             delay=300,)
         # if client:
        
-        col1,col2 = st.columns([1,1,1]) # DD_28062024: previously--> st.columns([1,1])
+        col1, col2, col3 = st.columns([1,1,1]) # DD_28062024: previously--> st.columns([1,1])
         with col2:            # DD_28062024: previously--> with col1
             date = st.date_input("Date")
             year = date.year
