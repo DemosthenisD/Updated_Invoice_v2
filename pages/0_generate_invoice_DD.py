@@ -213,8 +213,8 @@ def main():
             vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
             # # DD_28062024: previously--> vat_no     = st.selectbox("VAT No", vat_number)
             vat_no     = st_free_text_select(label="VAT No", 
-                                          options=vat_number,
-                                            format_func=lambda x: x.lower(),
+                                            options=vat_number,
+                                            #format_func=lambda x: x.lower(),
                                             placeholder="Select or Type VAT Number",
                                             disabled=False,
                                             delay=300,)
@@ -234,7 +234,7 @@ def main():
         # DD_28062024: previously--> vat = st.selectbox("VAT %", filtered_vat,)                                           
         vat   = st_free_text_select(label="VAT %", 
                                     options=filtered_vat,
-                                    format_func=lambda x: x.lower(),
+                                    #format_func=lambda x: x.lower(),
                                     placeholder="Select or Type VAT %-age",
                                     disabled=False,
                                     delay=300,)
