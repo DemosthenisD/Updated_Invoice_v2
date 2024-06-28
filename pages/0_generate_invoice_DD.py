@@ -238,7 +238,7 @@ def main():
                                     placeholder="Select or Type VAT %-age",
                                     disabled=False,
                                     delay=300,)
-        vat=float(vat)
+        vat=convert_to_number(vat)
         
         filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
 
@@ -488,6 +488,24 @@ def download_section(template_doc, year, invoice_no, client, format_option):
                         file_name = f"{invoice_no}-{client}.docx"
                         tmp_download_link = download_link_docx(template_doc, file_name, 'Click here to download DOCX')
                         st.markdown(tmp_download_link, unsafe_allow_html=True)    
+
+
+def convert_to_number(input_text):
+    try:
+        # Try to convert to an integer
+        number = int(input_text)
+        return number
+    except ValueError:
+        try:
+            # If conversion to integer fails, try to convert to float
+            number = float(input_text)
+            return number
+        except ValueError:
+            # If conversion to both integer and float fails, return None or raise an error
+            return None
+            # Alternatively, you can raise an error
+            # raise ValueError(f"Cannot convert '{input_text}' to a number")
+
 
 
 
