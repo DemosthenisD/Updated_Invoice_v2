@@ -212,12 +212,11 @@ def main():
         with col3:
             vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
             # # DD_28062024: previously--> vat_no     = st.selectbox("VAT No", vat_number)
-            vat_no     = st_free_text_select(label="VAT No", 
-                                            options=vat_number,
-                                            #format_func=lambda x: x.lower(),
-                                            placeholder="Select or Type VAT Number",
-                                            disabled=False,
-                                            delay=300,)
+            vat_no = st_free_text_select(label="VAT No", 
+                                        options=vat_number, #format_func=lambda x: x.lower(),
+                                        placeholder="Select or Type VAT Number",
+                                        disabled=False,
+                                        delay=300,)
         # if client:
        
         col1, col2, col3 = st.columns([1,1,1]) # DD_28062024: previously--> st.columns([1,1])
