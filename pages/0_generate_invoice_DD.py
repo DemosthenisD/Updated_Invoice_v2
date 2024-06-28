@@ -224,7 +224,7 @@ def main():
             date = st.date_input("Date")
             year = date.year
         with col3:            # DD_28062024: previously--> with col2
-            amount = st.number_input("Amount")
+            amount = st.number_input("Amount",step=int)
         with col1:            # DD_28062024: New addition
             Pre_invoice_no = len(df_Invoice_List[df_Invoice_List['Year'] == year]) +1
             #invoice_no= year &"/"& st.text_input(label="invoice No", value=Pre_invoice_no) # DD_28062024: previously--> _invoice_no = len(st.session_state.invoices) + 1
@@ -232,12 +232,12 @@ def main():
             
         filtered_vat = df_project_list[df_project_list['Client'] == client]['VAT %'].unique()
         # DD_28062024: previously--> vat = st.selectbox("VAT %", filtered_vat,)                                           
-        vat   = st_free_text_select(label="VAT %", 
-                                    options=filtered_vat,
+        vat   = float(st_free_text_select(label="VAT %", 
+                                    options=str(filtered_vat)+["---"],
                                     #format_func=lambda x: x.lower(),
                                     placeholder="Select or Type VAT %-age",
                                     disabled=False,
-                                    delay=300,)
+                                    delay=300,))
 
         
         filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
