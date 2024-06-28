@@ -118,7 +118,7 @@ def download_link_pdf(file_path, text, label):
 def download_link_docx(doc, year, invoice_no, client, filename, text):
     """Generates a download link for a Docx file."""
     root_dir = os.getcwd()  # Get the current working directory (root directory)
-    save_file_name = f"{year}-{invoice_no} {client} Invoice"
+    save_file_name = f"{year}/{invoice_no} {client} Invoice"
     doc.save(os.path.join(root_dir , filename))  # Save the docx file to the root directory
     with open(os.path.join(root_dir, filename), 'rb') as f:
         doc_bytes = f.read()
@@ -228,7 +228,8 @@ def main():
             amount = st.number_input("Amount")
         with col1:            # DD_28062024: New addition
             Pre_invoice_no = len(df_Invoice_List[df_Invoice_List['Year'] == year]) +1
-            invoice_no= year &"/"& st.text_input(label="invoice No", value=Pre_invoice_no) # DD_28062024: previously--> _invoice_no = len(st.session_state.invoices) + 1
+            #invoice_no= year &"/"& st.text_input(label="invoice No", value=Pre_invoice_no) # DD_28062024: previously--> _invoice_no = len(st.session_state.invoices) + 1
+            invoice_no= st.text_input(label="invoice No", value=Pre_invoice_no)
             
         filtered_vat = df_project_list[df_project_list['Client'] == client]['VAT %'].unique()
         # DD_28062024: previously--> vat = st.selectbox("VAT %", filtered_vat,)                                           
@@ -350,7 +351,7 @@ def main():
                     '{{placeholder2}}': address,
                     '{{placeholder3}}': vat_no,
                     '{{placeholder4}}': date,
-                    '{{placeholder5}}': invoice_no,
+                    '{{placeholder5}}': f"{year}-{invoice_no}",
                     #'{{placeholder6}}': year,  # DD_28062024 REMOVED THIS since invoice_no now inlcudes year
                     '{{placeholder7}}': description,
                     '{{placeholder8}}': amount,
