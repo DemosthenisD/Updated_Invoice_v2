@@ -238,7 +238,7 @@ def main():
                                     placeholder="Select or Type VAT %-age",
                                     disabled=False,
                                     delay=300,)
-        vat=convert_to_number(vat)
+        #vat=convert_to_number(vat)
         
         filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
 
