@@ -10,13 +10,15 @@ import convertapi
 from streamlit_free_text_select import st_free_text_select
 
 # Sidebar navigation
-# if st.sidebar.button("Generate Invoice", icon="🏡"): --> previous code (up to 3-11-2024). 
+# if st.sidebar.button("Generate Invoice", icon=":house:"): --> previous code (up to 3-11-2024). 
 # Next row is the updated code of row above, removed icon
-if st.sidebar.button("Generate Invoice"):
+if if st.sidebar.button("Generate Invoice", icon=":house:"):
     switch_page("0_generate_invoice_DD")
-if st.sidebar.button("List of Clients / Projects List", icon="📓"):
+#if st.sidebar.button("List of Clients / Projects List", icon="📓"):
+if st.sidebar.button("List of Clients / Projects List", icon=":notebook:"):
     switch_page("1_list_of_clients_projects")
-if st.sidebar.button("Add New Client/Project record", icon="✒️"):
+#if st.sidebar.button("Add New Client/Project record", icon="✒️"):
+if st.sidebar.button("Add New Client/Project record", icon=":black_nib:"):
     switch_page("2_add_new_client_project")
 
 # Initialize invoices in session state
