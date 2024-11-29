@@ -12,7 +12,7 @@ from streamlit_free_text_select import st_free_text_select
 # Sidebar navigation
 # if st.sidebar.button("Generate Invoice", icon=":house:"): --> previous code (up to 3-11-2024). 
 # Next row is the updated code of row above, removed icon
-if if st.sidebar.button("Generate Invoice", icon=":house:"):
+if st.sidebar.button("Generate Invoice", icon=":house:"):
     switch_page("0_generate_invoice_DD")
 #if st.sidebar.button("List of Clients / Projects List", icon="📓"):
 if st.sidebar.button("List of Clients / Projects List", icon=":notebook:"):
