@@ -20,7 +20,7 @@ with tab1:
        if username == user and password_input == password:
             st.session_state.username       = username
             st.session_state.password_input = password_input
-            st.write("Available pages:", _get_page_names())
+            st.write("Available pages:", get_pages("App.py"))
             switch_page('generate_invoice_DD')
        else:
             st.error("Please Provide valid UserID")    
