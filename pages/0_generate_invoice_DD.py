@@ -121,15 +121,29 @@ def remove_document_file(file_path):
         os.remove(file_path)
 
 def convert_to_number(input_text):
+    """
+    Converts the input text to a number (int or float). Returns None if invalid.
+    """
+    if not input_text:  # Handle empty or None input
+        return None
     try:
-        number = int(input_text)
+        # Attempt to convert to float (handles integers as well)
+        number = float(input_text)
         return number
     except ValueError:
-        try:
-            number = float(input_text)
-            return number
-        except ValueError:
-            return None
+        return None  # Return None if conversion fails
+
+
+#def convert_to_number(input_text):
+#    try:
+#        number = int(input_text)
+#        return number
+#    except ValueError:
+#        try:
+#            number = float(input_text)
+#            return number
+#        except ValueError:
+#            return None
 
 def main():
     if 'username' in st.session_state:
@@ -164,6 +178,23 @@ def main():
 
         filtered_vat = df_project_list[df_project_list['Client'] == client]['VAT %'].unique()
         vat = st_free_text_select(label="VAT %", options=str(filtered_vat), placeholder="Select or Type VAT %-age", disabled=False, delay=300,)
+        #vat = st.text_input("VAT %", placeholder="Enter VAT percentage")
+        if not vat.isdigit():
+            st.error("Please enter a valid numeric VAT percentage.")
+        else:
+            vat_number = float(vat)
+            VAT_Amount = (amount * vat_number) / 100
+            st.write(f"VAT Amount: {VAT_Amount}")
+
+        # Convert VAT input to a number
+        vat_number = convert_to_number(vat)
+
+        if vat_number is None:
+            st.error("Invalid VAT value. Please enter a valid number.")
+        else:
+            # Calculate VAT amount (ensure 'amount' is valid too)
+            VAT_Amount = (amount * vat_number) / 100
+            st.write(f"VAT Amount: {VAT_Amount}")
 
         filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
         filtered_projects = df_project_list[df_project_list['Client'] == client]['Project'].unique()
