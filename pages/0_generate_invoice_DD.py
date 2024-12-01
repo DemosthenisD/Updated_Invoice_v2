@@ -163,7 +163,8 @@ def main():
             filtered_address = df_client_list[df_client_list['Client'] == client]['Address'].unique()
             address = st_free_text_select(label="Address", options=filtered_address, format_func=lambda x: x.lower(), placeholder="Select or Type Address", disabled=False, delay=300,)
         with col3:
-            vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()
+            vat_number = "0.19" 
+            #df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()
             vat_no = st_free_text_select(label="VAT No", options=vat_number, placeholder="Select or Type VAT Number", disabled=False, delay=300,)
 
         col1, col2, col3 = st.columns([1, 1, 1])
