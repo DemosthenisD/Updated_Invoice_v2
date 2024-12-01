@@ -1,7 +1,7 @@
 import streamlit as st
 import toml
 from streamlit_extras.switch_page_button import switch_page
-from streamlit_extras.switch_page_button import get_pages
+from st_pages import get_pages, get_script_run_ctx
 
 
 # Load secrets
@@ -20,7 +20,7 @@ with tab1:
        if username == user and password_input == password:
             st.session_state.username       = username
             st.session_state.password_input = password_input
-            st.write("Available pages:", get_pages("App.py"))
+            st.write("Available pages:", get_pages(""))
             switch_page('generate_invoice_DD')
        else:
             st.error("Please Provide valid UserID")    
