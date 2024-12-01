@@ -1,7 +1,7 @@
 import streamlit as st
 import toml
 from streamlit_extras.switch_page_button import switch_page
-from streamlit_extras.switch_page_button import _get_page_names
+from streamlit_extras.switch_page_button import get_pages
 
 
 # Load secrets
