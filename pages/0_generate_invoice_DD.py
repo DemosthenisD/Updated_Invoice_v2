@@ -10,9 +10,14 @@ import convertapi
 from streamlit_free_text_select import st_free_text_select
 
 # Sidebar navigation
-st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice")
-st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List")    
-st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record")  
+st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice",               icon="🏡")
+st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
+st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record",  icon="✒️")  
+
+#st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice")
+#st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List")    
+#st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record")  
+
 # if st.sidebar.button("Generate Invoice", icon=":house:"): --> previous code (up to 3-11-2024). 
 # Next row is the updated code of row above, removed icon
 #if st.sidebar.button("Generate Invoice", icon=":house:"):
