@@ -212,8 +212,7 @@ def main():
         with col3:
             vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].dropna().unique().tolist()  # DD_17122024 added the dropna & "tolist"# DD_04062024: previously "My VAT No"
             # DD_17122024 Add default VAT options (0% and 19%) if not already present
-            default_vat_options = ['0%', '19%']
-            vat_number = vat_number.tolist() if len(vat_number) > 0 else default_vat_options # DD_17122024 added the "tolist" and using default if empty list
+            vat_number = vat_number.tolist() if len(vat_number) > 0 else ["No VAT No Found"] # DD_17122024 using default if empty list
             # DD_17122024 removed after code worked: st.write(f"VAT No: {vat_number}")
             # # DD_28062024: previously--> vat_no     = st.selectbox("VAT No", vat_number)
             vat_no = st_free_text_select(label="VAT No", 
@@ -234,10 +233,13 @@ def main():
             #invoice_no= year &"/"& st.text_input(label="invoice No", value=Pre_invoice_no) # DD_28062024: previously--> _invoice_no = len(st.session_state.invoices) + 1
             invoice_no= st.text_input(label="invoice No", value=Pre_invoice_no)
             
-        filtered_vat = df_project_list[df_project_list['Client'] == client]['VAT %'].unique()
+        filtered_vat_% = df_project_list[df_project_list['Client'] == client]['VAT %'].dropna().unique().tolist()  # DD_17122024 added the dropna & "tolist"
+        default_vat_options = ['0%', '19%']
+        filtered_vat_% = filtered_vat_% if len(filtered_vat_%) > 0 else default_vat_options # DD_17122024 added the "tolist" and using default if empty list
+        
         # DD_28062024: previously--> vat = st.selectbox("VAT %", filtered_vat,)                                           
         vat   = st_free_text_select(label="VAT %", 
-                                    options=str(filtered_vat),
+                                    options=filtered_vat_%,
                                     #format_func=lambda x: x.lower(),
                                     placeholder="Select or Type VAT %-age",
                                     disabled=False,
