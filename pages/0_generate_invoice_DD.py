@@ -214,7 +214,7 @@ def main():
             # DD_17122024 Add default VAT options (0% and 19%) if not already present
             default_vat_options = ['0%', '19%']
             vat_number = vat_number.tolist() if len(vat_number) > 0 else default_vat_options # DD_17122024 added the "tolist" and using default if empty list
-            st.write(f"VAT No: {vat_number}")
+            # DD_17122024 removed after code worked: st.write(f"VAT No: {vat_number}")
             # # DD_28062024: previously--> vat_no     = st.selectbox("VAT No", vat_number)
             vat_no = st_free_text_select(label="VAT No", 
                                         options=vat_number, #format_func=lambda x: x.lower(),
