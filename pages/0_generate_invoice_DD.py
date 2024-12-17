@@ -210,7 +210,8 @@ def main():
                                             disabled=False,
                                             delay=300,)
         with col3:
-            vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
+            vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique().tolist()  # DD_17122024 added the "tolist" part :# DD_04062024: previously "My VAT No"
+            st.write(f"VAT No: {vat_number}")
             # # DD_28062024: previously--> vat_no     = st.selectbox("VAT No", vat_number)
             vat_no = st_free_text_select(label="VAT No", 
                                         options=vat_number, #format_func=lambda x: x.lower(),
