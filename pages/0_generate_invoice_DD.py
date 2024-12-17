@@ -8,7 +8,7 @@ import os
 from base64 import b64encode
 from streamlit_extras.switch_page_button import switch_page
 import convertapi
-from streamlit_free_text_select import st_free_text_select
+from streamlit_free_text_select import 
 
 
 st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice",               icon="🏡")
@@ -203,7 +203,7 @@ def main():
             Client_Name_For_Invoice = df_project_list[df_project_list['Client'] == client]['Client Name (for Invoices)'].unique()
         with col2:
             filtered_address = df_client_list[df_client_list['Client'] == client]['Address'].unique() 
-            address = st_free_text_select(label="Address", 
+            address = (label="Address", 
                                           options=filtered_address,
                                             format_func=lambda x: x.lower(),
                                             placeholder="Select or Type Address",
@@ -215,7 +215,7 @@ def main():
             vat_number = vat_number.tolist() if len(vat_number) > 0 else ["No VAT No Found"] # DD_17122024 using default if empty list
             # DD_17122024 removed after code worked: st.write(f"VAT No: {vat_number}")
             # # DD_28062024: previously--> vat_no     = st.selectbox("VAT No", vat_number)
-            vat_no = st_free_text_select(label="VAT No", 
+            vat_no = (label="VAT No", 
                                         options=vat_number, #format_func=lambda x: x.lower(),
                                         placeholder="Select or Type VAT Number",
                                         disabled=False,
@@ -244,13 +244,13 @@ def main():
                                     placeholder="Select or Type VAT %-age",
                                     disabled=False,
                                     delay=300,)
-        vat = vat or 0        # DD_17122024 Defaults to 0 if vat is None
+        vat = float(vat) or 0        # DD_17122024 Defaults to 0 if vat is None
         #vat=convert_to_number(vat)
         
         filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
 
         filtered_projects = df_project_list[df_project_list['Client'] == client]['Project'].unique()          
-        project = st_free_text_select(label="Select Project", 
+        project = (label="Select Project", 
                                       options=filtered_projects,
                                       format_func=lambda x: x.lower(),
                                       placeholder="Select or Enter a project",
@@ -258,7 +258,7 @@ def main():
                                       delay=300,)
 
         filtered_description = df_project_list[df_project_list['Client'] == client]['description'].unique() 
-        description = st_free_text_select(label="Description",
+        description = (label="Description",
                                           options=filtered_description,
                                             format_func=lambda x: x.lower(),
                                             placeholder="Select or Enter a description",
