@@ -210,7 +210,10 @@ def main():
                                             disabled=False,
                                             delay=300,)
         with col3:
-            vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique().tolist()  # DD_17122024 added the "tolist" part :# DD_04062024: previously "My VAT No"
+            vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].unique()  # DD_04062024: previously "My VAT No"
+            # DD_17122024 Add default VAT options (0% and 19%) if not already present
+            default_vat_options = ['0%', '19%']
+            vat_number = vat_number.tolist() if len(vat_number) > 0 else default_vat_options # DD_17122024 added the "tolist" and using default if empty list
             st.write(f"VAT No: {vat_number}")
             # # DD_28062024: previously--> vat_no     = st.selectbox("VAT No", vat_number)
             vat_no = st_free_text_select(label="VAT No", 
