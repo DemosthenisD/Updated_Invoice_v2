@@ -233,13 +233,13 @@ def main():
             #invoice_no= year &"/"& st.text_input(label="invoice No", value=Pre_invoice_no) # DD_28062024: previously--> _invoice_no = len(st.session_state.invoices) + 1
             invoice_no= st.text_input(label="invoice No", value=Pre_invoice_no)
             
-        filtered_vat_% = df_project_list[df_project_list['Client'] == client]['VAT %'].dropna().unique().tolist()  # DD_17122024 added the dropna & "tolist"
+        filtered_vat_pct = df_project_list[df_project_list['Client'] == client]['VAT %'].dropna().unique().tolist()  # DD_17122024 added the dropna & "tolist"
         default_vat_options = ['0%', '19%']
-        filtered_vat_% = filtered_vat_% if len(filtered_vat_%) > 0 else default_vat_options # DD_17122024 added the "tolist" and using default if empty list
+        filtered_vat_pct = filtered_vat_pct if len(filtered_vat_pct) > 0 else default_vat_options # DD_17122024 added the "tolist" and using default if empty list
         
         # DD_28062024: previously--> vat = st.selectbox("VAT %", filtered_vat,)                                           
         vat   = st_free_text_select(label="VAT %", 
-                                    options=filtered_vat_%,
+                                    options=filtered_vat_pct,
                                     #format_func=lambda x: x.lower(),
                                     placeholder="Select or Type VAT %-age",
                                     disabled=False,
