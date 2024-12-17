@@ -212,7 +212,7 @@ def main():
         with col3:
             vat_number = df_project_list[df_project_list['Client'] == client]['VAT_No'].dropna().unique().tolist()  # DD_17122024 added the dropna & "tolist"# DD_04062024: previously "My VAT No"
             # DD_17122024 Add default VAT options (0% and 19%) if not already present
-            vat_number = vat_number.tolist() if len(vat_number) > 0 else ["No VAT No Found"] # DD_17122024 using default if empty list
+            vat_number = vat_number if len(vat_number) > 0 else ["No VAT No Found"] # DD_17122024 using default if empty list
             # DD_17122024 removed after code worked: st.write(f"VAT No: {vat_number}")
             # # DD_28062024: previously--> vat_no     = st.selectbox("VAT No", vat_number)
             vat_no = st_free_text_select(label="VAT No", 
@@ -245,7 +245,8 @@ def main():
                                     disabled=False,
                                     delay=300,)
         vat = vat or 0        # DD_17122024 Defaults to 0 if vat is None also edited to make string into float
-        vat=convert_to_number(vat)
+        vat = float(vat)
+        #vat=convert_to_number(vat)
         
         filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
 
@@ -266,7 +267,6 @@ def main():
                                             delay=300,)
 
         
-
         with st.expander("Select Invoice Template and Format"):
             col1, col2 = st.columns([1,1])
             with col1:
@@ -281,7 +281,7 @@ def main():
                 format_option = st.radio("Select download format", ["DOCX", "PDF"],  key="format_option")
         # DD 17122024 Added debugging statements to verify the values of amount and vat just before this calculation
         st.write(f"Amount: {amount}, VAT: {vat}")
-        VAT_Amount = (amount*vat)/100
+        VAT_Amount = (amount * vat)/100
         Expenses_Net_Amount = 0
         Expenses_VAT_Amount = 0 #(Expenses_Net_Amount*vat)/100
         
