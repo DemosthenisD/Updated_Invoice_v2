@@ -244,8 +244,8 @@ def main():
                                     placeholder="Select or Type VAT %-age",
                                     disabled=False,
                                     delay=300,)
-        vat = float(vat) or 0        # DD_17122024 Defaults to 0 if vat is None also edited to make string into float
-        #vat=convert_to_number(vat)
+        vat = vat or 0        # DD_17122024 Defaults to 0 if vat is None also edited to make string into float
+        vat=convert_to_number(vat)
         
         filtered_client_code = df_project_list[df_project_list['Client'] == client]['client_code'].unique()
 
