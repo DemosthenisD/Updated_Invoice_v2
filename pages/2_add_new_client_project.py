@@ -34,8 +34,8 @@ def load_dataframe(file_path, worksheet_name):
         st.write(f"File {file_path} not found.")
         exit()
 
-df = load_dataframe(file_path, worksheet_name)
-
+#df = load_dataframe(file_path, worksheet_name)
+df = conn.read(worksheet=worksheet_name)
 
 tab1, tab2, tab3 = st.tabs(['Add New Client', 'Add Project', 'Add Address'])
 with tab1:
