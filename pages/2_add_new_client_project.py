@@ -1,6 +1,16 @@
 import streamlit as st
 import pandas as pd
 import os
+#----------------------------------------------------------------------------------------------
+# Added 08-01-2025 --> see https://docs.streamlit.io/develop/tutorials/databases/private-gsheet
+# also see https://github.com/streamlit/gsheets-connection
+
+from streamlit_gsheets import GSheetsConnection
+
+## Create a connection object.
+#conn = st.connection("gsheets", type=GSheetsConnection)
+#df = conn.read()
+#----------------------------------------------------------------------------------------------
 
 st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice",               icon="🏡")
 st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
