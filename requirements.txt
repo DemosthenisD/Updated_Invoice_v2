@@ -68,7 +68,7 @@ smmap==5.0.1
 soupsieve==2.5
 st-annotated-text==4.0.1
 st-theme==1.2.3
-#streamlit==1.35.0
+streamlit==1.35.0
 streamlit-camera-input-live==0.2.0
 streamlit-card==1.0.2
 streamlit-embedcode==0.1.2
@@ -95,5 +95,5 @@ weasyprint==62.2
 webencodings==0.5.1
 wheel==0.43.0
 zopfli==0.2.3
-st-gsheets-connection==0.1.0
-streamlit==1.29.0
+st-gsheets-connection
+
