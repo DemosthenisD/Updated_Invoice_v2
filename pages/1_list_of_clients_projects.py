@@ -24,11 +24,18 @@ def load_dataframe(file_path, worksheet_name):
         st.write(f"File {file_path} not found.")
         exit()
 try:
-    file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_28062024.xlsx')  # Full file path
+    # Edited 08-01-2025 to replace xcel file within github with the google sheet link
+    #file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_28062024.xlsx')  # Full file path - DD_04062024: UPDATED FILE NAME
+    file_path = st.connection("gsheets", type=GSheetsConnection)
+    #-------------------------------------------------------------------------------------------------------------
+    ## Create a connection object.
+    #conn = st.connection("gsheets", type=GSheetsConnection)
+    #df = conn.read()
 
     worksheet_name_1 = "InvoiceLogTemplate"
-    df_1 = load_dataframe(file_path, worksheet_name_1)
-
+    #df_1 = load_dataframe(file_path, worksheet_name_1)
+    df_1 = conn.read(worksheet=worksheet_name_1)
+    
     worksheet_client_list = "Client_List"
     #df_client_list = load_dataframe(file_path, worksheet_client_list)
     df_client_list= conn.read(worksheet=worksheet_client_list)
