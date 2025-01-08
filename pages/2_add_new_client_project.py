@@ -16,8 +16,14 @@ st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoi
 st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
 st.sidebar.page_link('pages/2_add_new_client_project.py',  label="Add New Client/Project record",  icon="✒️")  
 
+# Edited 08-01-2025 to replace xcel file within github with the google sheet link
+#file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_28062024.xlsx')  # Full file path - DD_04062024: UPDATED FILE NAME
+file_path = st.connection("gsheets", type=GSheetsConnection)
+#-------------------------------------------------------------------------------------------------------------
+## Create a connection object.
+#conn = st.connection("gsheets", type=GSheetsConnection)
+#df = conn.read()
 
-file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_28062024.xlsx')  # Full file path
 worksheet_name = "Clients"
 
 def load_dataframe(file_path, worksheet_name):
