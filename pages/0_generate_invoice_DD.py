@@ -9,7 +9,16 @@ from base64 import b64encode
 from streamlit_extras.switch_page_button import switch_page
 import convertapi
 from streamlit_free_text_select import st_free_text_select
+#----------------------------------------------------------------------------------------------
+# Added 08-01-2025 --> see https://docs.streamlit.io/develop/tutorials/databases/private-gsheet
+# also see https://github.com/streamlit/gsheets-connection
 
+from streamlit_gsheets import GSheetsConnection
+
+## Create a connection object.
+#conn = st.connection("gsheets", type=GSheetsConnection)
+#df = conn.read()
+#----------------------------------------------------------------------------------------------
 
 st.sidebar.page_link('pages/0_generate_invoice_DD.py',     label="Generate Invoice",               icon="🏡")
 st.sidebar.page_link('pages/1_list_of_clients_projects.py',label="List of Clients / Projects List",icon="📓")    
@@ -183,19 +192,28 @@ def remove_document_file(file_path):
 
 def main():
     if 'username' in st.session_state:
+# Edited 08-01-2025 to replace xcel file within github with the google sheet link
+        #file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_28062024.xlsx')  # Full file path - DD_04062024: UPDATED FILE NAME
+        file_path = st.connection("gsheets", type=GSheetsConnection)
+        #-------------------------------------------------------------------------------------------------------------
+        ## Create a connection object.
+        #conn = st.connection("gsheets", type=GSheetsConnection)
+        #df = conn.read()
 
-        file_path = os.path.join(os.getcwd(), 'InvoiceLogTemplate_DD_28062024.xlsx')  # Full file path - DD_04062024: UPDATED FILE NAME
         
         worksheet_project_list = "Project_List"  # DD_04062024: previously "Clients"
-        df_project_list = load_dataframe(file_path, worksheet_project_list)
-
+        #df_project_list = load_dataframe(file_path, worksheet_project_list)
+        df_project_list = conn.read(worksheet=worksheet_project_list) # No need to use file path since this is already in the connection
+        
         worksheet_client_list = "Client_List" 
-        df_client_list = load_dataframe(file_path, worksheet_client_list)
+        #df_client_list = load_dataframe(file_path, worksheet_client_list)
+        df_client_list= conn.read(worksheet=worksheet_client_list)
         
         clients  = df_project_list['Client'].unique()
 
-        df_Invoice_List = load_dataframe(file_path,"InvoiceLogTemplate")
-
+        #df_Invoice_List = load_dataframe(file_path,"InvoiceLogTemplate")
+        df_Invoice_List = conn.read(worksheet="InvoiceLogTemplate")
+                                    
         col1, col2, col3 = st.columns([1,1,1])
         with col1:
             client = st.selectbox("Select Client",clients)
